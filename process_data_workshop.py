@@ -162,13 +162,38 @@ def process_dataset(d):
     
     ind = int(dataset.split('_')[1])
     
-    if ind>=800 and ind<=979:
+    
+    f = open(path_datasets_list / 'datasets_201905.txt', 'r')
+    datasets_201905 = f.readlines()
+    f.close()
+    
+    f = open(path_datasets_list / 'datasets_201912.txt', 'r')
+    datasets_201912 = f.readlines()
+    f.close()
+    
+    f = open(path_datasets_list / 'datasets_202012.txt', 'r')
+    datasets_202012 = f.readlines()
+    f.close()
+    
+    if ind in [int(x.split('_')[1]) for x in datasets_201905]:
         data_path = "201905_beamtime_medaka_stained"
+        
+    if ind in [int(x.split('_')[1]) for x in datasets_201912]:
+        data_path = "201912_beamtime_medaka"
+        
+    if ind in [int(x.split('_')[1]) for x in datasets_202012]:
+        data_path = "202012_beamtime_medaka"
+        
+    
+    # OLD: Depricated
+    #if ind>=800 and ind<=979:
+    #    data_path = "201905_beamtime_medaka_stained"
 
-    elif ind>=1064 and ind<=1297:
-        data_path = "201912_beamtime_medaka";
+    #elif ind>=1064 and ind<=1297:
+    #    data_path = "201912_beamtime_medaka";
     
     #data_path = "201912_beamtime_medaka"
+    
     
     path = Path("/mnt/HD-LSDF/Medaka/" + data_path + "/" + dataset +"/scaled_0.5_8bit_slices.tif")
     
@@ -309,7 +334,7 @@ def main():
     
    
                              
-    pool = mp.Pool(4)
+    pool = mp.Pool(10)
     res = pool.map(process_dataset, dataset_list)
     
     elapsed = (time.time() - start) / 60
