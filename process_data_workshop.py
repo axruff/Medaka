@@ -405,9 +405,9 @@ def process_dataset(d):
     #fig.savefig(path_output / f'{dataset}_test.png')
 
 path_datasets_list = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/")
-path_landmarks = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/landmarks_part09/")
-path_output = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/data_part09/")
-path_preview = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/preview_part09/")
+path_landmarks = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/landmarks_part12/")
+path_output = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/data_part12/")
+path_preview = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/preview_part12/")
     
 def main(): 
     
