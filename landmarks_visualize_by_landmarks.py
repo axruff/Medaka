@@ -424,6 +424,8 @@ if __name__ == "__main__":
             land_eval_df = eval_df[eval_df['landmark'] == ld]
 
             top_df = land_eval_df.sort_values(by='result', ascending=False).head(TOP_COUNT)
+            top_df.to_excel(path_output / ps / f'{ld_name}.xlsx')
+            #continue
 
             #print()
             #print(top_df)
