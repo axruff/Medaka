@@ -5,7 +5,7 @@ import numpy as np
 # List of participants
 #---------------------------------------
 
-participants = ['ca', 'jf', 'tc', 'cs', 'ra', 'kk', 'vc', 'bew', 'ttt', 'kp', 'jo', 'jvm', 'tt', 'lucie', 'ast', 'rs', 'es', 'jb']
+participants = ['ca', 'jf', 'tc', 'cs', 'ra', 'kk', 'vc', 'bew', 'ttt', 'kp', 'jo', 'jvm', 'tt', 'lucie', 'ast', 'rs', 'es', 'jb', 'pw']
 
 participants_names = {'jf': 'Jana',
                      'jo': 'Jasmin',
@@ -24,7 +24,8 @@ participants_names = {'jf': 'Jana',
                      'ast': 'Anna-Sophia',
                      'rs': 'Risa',
                      'es': 'Encarnacion',
-                     'jb': 'Joergen'}
+                     'jb': 'Joergen',
+                     'pw': 'Philip'}
 
 participants_pointset_count= {
                      'jf': 3,
@@ -44,7 +45,8 @@ participants_pointset_count= {
                      'ast': 3,
                      'rs': 2,
                      'es': 4,
-                     'jb': 4}
+                     'jb': 4,
+                     'pw':3}
 
 #---------------------------------------
 # Landmarks info
