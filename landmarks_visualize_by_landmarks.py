@@ -386,19 +386,21 @@ def visualize_result(index):
     
 if __name__ == "__main__":
     
-    path_eval = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/evaluation/")
-    path_output = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/evaluation_vis/by_landmark_centered/")
+    VERSION = 'diff_v7_v8'
+    
+    path_eval = Path(f"/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/evaluation/{VERSION}/")
+    path_output = Path(f"/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/evaluation_vis/by_landmark_centered_{VERSION}/")
     volumes_path = Path("/mnt/LSDF/tomo/ershov/medaka/workshop_landmarks/data/")
     
     #print(landmarks_pointset_names)
     
     # Top differences between 2 people
-    TOP_COUNT = 200
+    TOP_COUNT = 300
     
     
     start = time.time()
     
-    res_df = pd.read_excel(path_eval / 'results_landmarks.xlsx')
+    res_df = pd.read_excel(path_eval / 'results_landmarks_v8.xlsx')
     
     for ps in landmarks_pointset_names:
     #for ps in ['pointset1_vert', 'pointset2_fins']:
@@ -406,7 +408,7 @@ if __name__ == "__main__":
         print('Processing pointset: ', ps)
 
 
-        eval_df = pd.read_excel(path_eval / f'eval_{ps}.xlsx')
+        eval_df = pd.read_excel(path_eval / f'eval_{ps}_{VERSION}.xlsx')
         
         landmarks_list = list(eval_df["landmark"].unique())
         
@@ -424,7 +426,7 @@ if __name__ == "__main__":
             land_eval_df = eval_df[eval_df['landmark'] == ld]
 
             top_df = land_eval_df.sort_values(by='result', ascending=False).head(TOP_COUNT)
-            top_df.to_excel(path_output / ps / f'{ld_name}.xlsx')
+            top_df.to_excel(path_output / ps / f'{ld_name}_{VERSION}.xlsx')
             #continue
 
             #print()
