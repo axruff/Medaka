@@ -345,7 +345,7 @@ def make_landmarks_comparison_figure_centered(im, file_name, land1, land2, landm
     plt.savefig(f'{file_name}.png')
     
     
-def make_single_landmark_figure_centered(im, land1, landmark_name, name1, color1 = 'red'):
+def make_single_landmark_figure_centered(im, file_name, land1, landmark_name, name1, color1 = 'red'):
 
     marker_size = 5
     marker_alpha = 0.7
@@ -503,9 +503,12 @@ def visualize_single_result(index):
     
     landmark_index = get_landmark_index(all_landmarks, pointset, landmark)
 
-    make_single_landmark_figure_centered(im, path_out / f'{str(pos).zfill(4)}_{sample}_{pointset}_{str(landmark_index).zfill(2)}_{landmark}_{name1}', 
-                                     [x,y,z], f'{pointset}: {landmark}', 
-                                     participants_names[name1])
+    make_single_landmark_figure_centered(im, 
+                                         path_out / f'{str(pos).zfill(4)}_{sample}_{pointset}_{str(landmark_index).zfill(2)}_{landmark}_{name1}', 
+                                        [x,y,z], 
+                                         f'{pointset}: {landmark}', 
+                                         participants_names[name1])
+    
     
     
     
@@ -536,7 +539,7 @@ if __name__ == "__main__":
 
 
         #eval_df = pd.read_excel(path_eval / f'eval_{ps}_{VERSION}.xlsx')
-        eval_df_eyes = pd.read_excel(path_eval / f'eval_pointset5_eyes_v9_ast_without_thomas.xlsx')
+        eval_df = pd.read_excel(path_eval / f'eval_pointset5_eyes_v9_ast_without_thomas.xlsx')
         
         landmarks_list = list(eval_df["landmark"].unique())
         
@@ -553,7 +556,9 @@ if __name__ == "__main__":
             
             land_eval_df = eval_df[eval_df['landmark'] == ld]
 
-            top_df = land_eval_df.sort_values(by='result', ascending=False).head(TOP_COUNT)
+            #top_df = land_eval_df.sort_values(by='result', ascending=False).head(TOP_COUNT) # Pairs: Sort based on difference
+            top_df = land_eval_df # Single: No sorting
+            
             top_df.to_excel(path_output / ps / f'{ld_name}_{VERSION}.xlsx')
             #continue
 
@@ -566,7 +571,7 @@ if __name__ == "__main__":
 
             #print(list(zip(indexes, proc_list)))
 
-            pool = mp.Pool(30)
+            pool = mp.Pool(20)
             #res = pool.map(visualize_pair_result, list(zip(indexes, proc_list))) 
             res = pool.map(visualize_single_result, list(zip(indexes, proc_list))) 
 
