@@ -1,2 +1,7 @@
 
 *.mps
+/.ipynb_checkpoints
+00_hypophysis.xlsx
+02_optic chiasm_crossing.xlsx
+03_tongue tip.xlsx
+/results
