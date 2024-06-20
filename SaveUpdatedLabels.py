@@ -6,11 +6,15 @@ from OrsHelpers.datasethelper import DatasetHelper
 from OrsHelpers.layoutpropertieshelper import LayoutPropertiesHelper
 from OrsPythonPlugins.OrsObjectPropertiesList.OrsObjectPropertiesList import OrsObjectPropertiesList
 from OrsPythonPlugins.OrsDerivedDataset.OrsDerivedDataset import OrsDerivedDataset
+from OrsPythonPlugins.OrsDatasetProperties.OrsDatasetProperties import OrsDatasetProperties
 from OrsHelpers.roihelper import ROIHelper
 from OrsHelpers.structuredGridLogger import StructuredGridLogger
 from OrsHelpers.structuredGridHelper import StructuredGridHelper
 from OrsHelpers.reporthelper import ReportHelper
 from OrsHelpers.displayROI import DisplayROI
+from ORSServiceClass.OrsPlugin.abstractContext import AbstractContext
+from OrsLibraries.workingcontext import WorkingContext
+from ORSModel.ors import Color
 from PIL import Image
 import math
 import json
@@ -20,7 +24,8 @@ from OrsHelpers.multiroilabelhelper import MultiROILabelHelper
 from OrsHelpers.datasethelper import DatasetHelper
 
 
-PATH_INPUT_FOLDER        = "d:\\data\\medaka\\data\\"
+PATH_INPUT_FOLDER        = "d:\\data\\medaka\\data\\segmentations_corrections\\"
+PATH_OUTPUT_INFO_FOLDER  = "d:\\data\\medaka\\data\\segmentations_corrections\\"
 
 SPACING = 0.001 # Pixel size in micrometers
 ROI_COUNT = 9
@@ -181,38 +186,104 @@ def clean_all():
     multi_roi = None
     dataset = None 
 
+def copy_transform(vol, label):
+
+    b = vol.getBox()
+        
+    x_dir = b.getDirection0()
+    y_dir = b.getDirection1()
+    z_dir = b.getDirection2()
+
+    x_pos = b.getOrigin().getX()
+    y_pos = b.getOrigin().getY()
+    z_pos = b.getOrigin().getZ()
+
+    OrsDatasetProperties.changeAdvancedStructuredGridProperties(structuredGrid=label,
+                                                            xPosition=x_pos,
+                                                            yPosition=y_pos,
+                                                            zPosition=z_pos,
+                                                            orientationAxis1X=x_dir.getX(),
+                                                            orientationAxis1Y=x_dir.getY(),
+                                                            orientationAxis1Z=x_dir.getZ(),
+                                                            orientationAxis2X=y_dir.getX(),
+                                                            orientationAxis2Y=y_dir.getY(),
+                                                            orientationAxis2Z=y_dir.getZ(),
+                                                            orientationAxis3X=z_dir.getX(),
+                                                            orientationAxis3Y=z_dir.getY(),
+                                                            orientationAxis3Z=z_dir.getZ())
+
+    StructuredGridLogger.resetVisualBoxOfChannelFromLayoutGenealogicalName(aName='', channel=label)
+    label.publish(logging=True)
+
+def save_rotation_info(im, file_name):
+    b = im.getBox()
+    
+    x_dir = b.getDirection0()
+    y_dir = b.getDirection1()
+    z_dir = b.getDirection2()
+    
+    rotation_info = {'x_dir': {'x': x_dir.getX(), 'y': x_dir.getY(), 'z': x_dir.getZ()},
+                     'y_dir': {'x': y_dir.getX(), 'y': y_dir.getY(), 'z': y_dir.getZ()},
+                     'z_dir': {'x': z_dir.getX(), 'y': z_dir.getY(), 'z': z_dir.getZ()}
+                    }
+    
+    with open(PATH_OUTPUT_INFO_FOLDER + file_name + '_rot_info.txt', "w") as fp:
+        json.dump(rotation_info, fp)  # encode dict into JSON 
+        
+    print(f'Dataset: {file_name}: Rotation info is saved')
+
+
+
+def set_lut_for_labels(multi_roi):
+    multi_roi.setLabelColor(1, Color(float(255/255),float(255/255),float(0/255)))
+    multi_roi.setLabelColor(2, Color(float(0/255),float(174/255),float(255/255)))
+    multi_roi.setLabelColor(3, Color(float(127/255),float(42/255),float(0/255)))
+    multi_roi.setLabelColor(4, Color(float(255/255),float(0/255),float(255/255)))
+    multi_roi.setLabelColor(5, Color(float(170/255),float(170/255),float(0/255)))
+    multi_roi.setLabelColor(6, Color(float(20/255),float(122/255),float(255/255)))
+    multi_roi.setLabelColor(7, Color(float(85/255),float(255/255),float(255/255)))
+    multi_roi.setLabelColor(8, Color(float(0/255),float(255/255),float(0/255)))
+    multi_roi.setLabelColor(9, Color(float(0/255),float(170/255),float(0/255)))
+
+    multi_roi.setLabelName(1, 'optic nerves')
+    multi_roi.setLabelName(2, 'optic tectum')
+    multi_roi.setLabelName(3, 'forebrain')
+    multi_roi.setLabelName(4, 'midbrain')
+    multi_roi.setLabelName(5, 'hindbrain')
+    multi_roi.setLabelName(6, 'cerebellum')
+    multi_roi.setLabelName(7, 'epiphysis')
+    multi_roi.setLabelName(8, 'hypophysis')
+    multi_roi.setLabelName(9, 'torus')
 
 ##-------------------------------------------------
 ## Testing
 ##-------------------------------------------------
 
-vol = load_volume('1099.tif')
-label = load_volume('1099_brain.tif')
+##-------------------------------------------------
+## 1 Load volume
+##-------------------------------------------------
+i = 446
+vol = load_volume(f'{i}_vol.tif')
 
+##-------------------------------------------------
+## 2 Manually align, Load labels, Apply transform, Save transfrom
+##-------------------------------------------------
+
+label = load_volume(f'{i}_brain.tif')
+copy_transform(vol, label)
 multi_roi = DatasetHelper.createMultiROIFromDataset(dataset=label, multiROI=None, IProgress=None)
+set_lut_for_labels(multi_roi)
 multi_roi.publish(logging=True)
+save_rotation_info(vol, f'{i}')
+WorkingContext.setCurrentGlobalState(None, 'OrsStateTrack')
 
-
-
-# def extract_all_roi_and_save(multi_roi, file_name):
-#     return
-
-
-
-# def extract_roi(multi_roi, label_index):
-#     roi = MultiROILabelHelper.extractROIForLabel(multiroi=multi_roi, label=label_index)
-#     roi.publish(logging=True)
-#     return roi
-
-# roi = extract_roi(multi_roi, 5)
-
+##-------------------------------------------------
+## 3 Manually correct, Save labels
+##-------------------------------------------------
 
 dataset = DatasetHelper.createDatasetFromMultiROI(aMultiROI=multi_roi, IProgress=None)
 dataset.publish(logging=True)
-
 array = dataset.getNDArray()
-save_3d_array_as_tiff(array, PATH_INPUT_FOLDER + '1099_labels.tif')
-
-
-
+save_3d_array_as_tiff(array, PATH_INPUT_FOLDER + f'{i}_brain_corr.tif')
+clean_all()
 
