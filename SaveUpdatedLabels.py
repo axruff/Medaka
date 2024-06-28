@@ -12,7 +12,7 @@ from OrsHelpers.structuredGridLogger import StructuredGridLogger
 from OrsHelpers.structuredGridHelper import StructuredGridHelper
 from OrsHelpers.reporthelper import ReportHelper
 from OrsHelpers.displayROI import DisplayROI
-from ORSServiceClass.OrsPlugin.abstractContext import AbstractContext
+#from ORSServiceClass.OrsPlugin.abstractContext import AbstractContext
 from OrsLibraries.workingcontext import WorkingContext
 from ORSModel.ors import Color
 from PIL import Image
@@ -24,8 +24,8 @@ from OrsHelpers.multiroilabelhelper import MultiROILabelHelper
 from OrsHelpers.datasethelper import DatasetHelper
 
 
-PATH_INPUT_FOLDER        = "d:\\data\\medaka\\data\\segmentations_corrections\\"
-PATH_OUTPUT_INFO_FOLDER  = "d:\\data\\medaka\\data\\segmentations_corrections\\"
+PATH_INPUT_FOLDER        = "d:\\data\\medaka\\segmentations_corrections\\"
+PATH_OUTPUT_INFO_FOLDER  = "d:\\data\\medaka\\segmentations_corrections\\"
 
 SPACING = 0.001 # Pixel size in micrometers
 ROI_COUNT = 9
@@ -262,7 +262,7 @@ def set_lut_for_labels(multi_roi):
 ##-------------------------------------------------
 ## 1 Load volume
 ##-------------------------------------------------
-i = 446
+i = 459
 vol = load_volume(f'{i}_vol.tif')
 
 ##-------------------------------------------------
